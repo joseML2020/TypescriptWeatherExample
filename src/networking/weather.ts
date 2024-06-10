@@ -1,7 +1,23 @@
+import { API_CURRENT, API_KEY } from "../helpers/constants";
 import { WeatherResponse } from "../model/weatherResponse";
 
-const city = 'Example';
+export async function getWeatherData(city: string): Promise<WeatherResponse> {
+    try{
+       return await callApi(`${API_CURRENT}//weather?q=${city}&appid=${API_KEY}&units=metric`);  
+    } catch(e:any){
+        throw new Error(e.message);
+    }
+}
 
-const API_CURRENT = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=ac6f213887b95d0b8171b342e702e112&units=metric`;
-
-// TODO: Create an async function with an argument called city to return the that of the endpoint
+async function callApi(url: string): Promise<any> {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        throw new Error ('There was a problem with the fetch operation'); 
+    }
+}
